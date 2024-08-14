@@ -57,8 +57,8 @@
 		0A5DA01A2C6A0E3200D8E86C = {
 			isa = PBXGroup;
 			children = (
-				0A5DA0252C6A0E3200D8E86C /* X */,
 				0A5DA0242C6A0E3200D8E86C /* Products */,
+				0A5DA0252C6A0E3200D8E86C /* X */,
 			);
 			sourceTree = "<group>";
 		};

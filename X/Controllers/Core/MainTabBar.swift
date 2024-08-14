@@ -22,9 +22,9 @@ class MainTabBar: UITabBarController {
         let directMessagesVC = UINavigationController(rootViewController: DirectMessagesVC())
         directMessagesVC.tabBarItem.image = UIImage(systemName: "envelope")
         
+        UITabBar.appearance().tintColor = UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black
+      
         setViewControllers([homeVC, searchVC, notificationsVC, directMessagesVC], animated: true)
-        
-        
     }
 
 }

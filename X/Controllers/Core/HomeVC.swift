@@ -20,12 +20,32 @@ class HomeVC: UIViewController {
         view.addSubview(timeline)
         timeline.dataSource = self
         timeline.delegate = self
+        configureNavigationBar()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         timeline.frame = view.frame
     }
+    
+    private func configureNavigationBar() {
+        let logo = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
+        logo.contentMode = .scaleAspectFit
+        let imageLogo = UITraitCollection.current.userInterfaceStyle == .dark ? UIImage(resource: .xDarkMode) : UIImage(resource: .xWhiteMode)
+        logo.image = imageLogo
+        
+        let middleView = UIView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
+        middleView.addSubview(logo)
+        navigationItem.titleView = middleView
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapProfile))
+        navigationController?.navigationBar.tintColor = UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black
+    }
+    
+    @objc private func didTapProfile() {
+        navigationController?.pushViewController(ProfileVC(), animated: true)
+    }
+    
 
 }
 

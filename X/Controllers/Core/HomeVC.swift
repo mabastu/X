@@ -11,7 +11,7 @@ class HomeVC: UIViewController {
     
     private let timeline: UITableView = {
         let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
         return tableView
     }()
 
@@ -24,7 +24,7 @@ class HomeVC: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        timeline.frame = view.bounds
+        timeline.frame = view.frame
     }
 
 }
@@ -35,8 +35,28 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = "Text"
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as? PostCell else {
+            return UITableViewCell()
+        }
+        cell.delegate = self
         return cell
+    }
+}
+
+extension HomeVC: PostCellDelegate {
+    func didTapReply() {
+        print("reply")
+    }
+    
+    func didTapLike() {
+        print("like")
+    }
+    
+    func didTapRepost() {
+        print("repost")
+    }
+    
+    func didTapShare() {
+        print("share")
     }
 }

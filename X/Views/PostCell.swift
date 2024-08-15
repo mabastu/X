@@ -26,7 +26,7 @@ class PostCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(resource: .imageAvatar)
         imageView.backgroundColor = .yellow
         return imageView
     }()
@@ -43,7 +43,7 @@ class PostCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "@mabast"
+        label.text = "@mabastu"
         label.textColor = .secondaryLabel
         return label
     }()

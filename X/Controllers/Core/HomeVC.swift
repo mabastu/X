@@ -25,7 +25,7 @@ class HomeVC: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        timeline.frame = view.frame
+        timeline.frame = view.bounds
     }
     
     private func configureNavigationBar() {
@@ -45,7 +45,7 @@ class HomeVC: UIViewController {
     @objc private func didTapProfile() {
         navigationController?.pushViewController(ProfileVC(), animated: true)
     }
-    
+
 
 }
 

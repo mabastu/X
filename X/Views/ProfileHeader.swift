@@ -9,6 +9,32 @@ import UIKit
 
 class ProfileHeader: UIView {
     
+    private enum SectionTabs: String {
+        case post = "Post"
+        case replies = "Replies"
+        case media = "Media"
+        case likes = "Likes"
+        
+        var index: Int {
+            switch self {
+            case .post:
+                return 0
+            case .replies:
+                return 1
+            case .media:
+                return 2
+            case .likes:
+                return 3
+            }
+        }
+    }
+    
+    private var selectedTab: Int = 0 {
+        didSet {
+            print(selectedTab)
+        }
+    }
+    
     private let profileCoverImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -157,7 +183,19 @@ class ProfileHeader: UIView {
     }
     
     @objc private func didTapTab(_ sender: UIButton) {
-        print("Tapped tab: \(sender.titleLabel?.text ?? "")")
+        guard let lable = sender.titleLabel?.text else { return }
+        switch lable {
+        case SectionTabs.post.rawValue:
+            selectedTab = 0
+        case SectionTabs.replies.rawValue:
+            selectedTab = 1
+        case SectionTabs.media.rawValue:
+            selectedTab = 2
+        case SectionTabs.likes.rawValue:
+            selectedTab = 3
+        default:
+            selectedTab = 0
+        }
     }
     
     private func configureUI() {

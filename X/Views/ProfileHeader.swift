@@ -31,7 +31,11 @@ class ProfileHeader: UIView {
     
     private var selectedTab: Int = 0 {
         didSet {
-            print(selectedTab)
+            for i in 0..<tabs.count {
+                UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
+                    self?.sectionsStack.arrangedSubviews[i].tintColor = i == self?.selectedTab ? .label : .secondaryLabel
+                }
+            }
         }
     }
     
@@ -143,7 +147,7 @@ class ProfileHeader: UIView {
             let button = UIButton(type: .system)
             button.setTitle(buttonTitle, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-            button.tintColor = .label
+            button.tintColor = .secondaryLabel
             button.translatesAutoresizingMaskIntoConstraints = false
             return button
         }
@@ -176,8 +180,11 @@ class ProfileHeader: UIView {
     }
     
     private func configureStackButton() {
-        for (_, button) in sectionsStack.arrangedSubviews.enumerated() {
+        for (i, button) in sectionsStack.arrangedSubviews.enumerated() {
             guard let button = button as? UIButton else { return }
+            if i == selectedTab {
+                button.tintColor = .label
+            }
             button.addTarget(self, action: #selector(didTapTab(_:)), for: .touchUpInside)
         }
     }

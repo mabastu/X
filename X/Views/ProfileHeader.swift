@@ -29,15 +29,28 @@ class ProfileHeader: UIView {
         }
     }
     
+    private var indicatorLeadingAnchors: [NSLayoutConstraint] = []
+    private var indicatorTrailingAnchors: [NSLayoutConstraint] = []
+    
     private var selectedTab: Int = 0 {
         didSet {
             for i in 0..<tabs.count {
                 UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
                     self?.sectionsStack.arrangedSubviews[i].tintColor = i == self?.selectedTab ? .label : .secondaryLabel
+                    self?.indicatorLeadingAnchors[i].isActive = i == self?.selectedTab ? true : false
+                    self?.indicatorTrailingAnchors[i].isActive = i == self?.selectedTab ? true : false
+                    self?.layoutIfNeeded()
                 }
             }
         }
     }
+    
+    private let indicator: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .label
+        return view
+    }()
     
     private let profileCoverImage: UIImageView = {
         let imageView = UIImageView()
@@ -156,7 +169,7 @@ class ProfileHeader: UIView {
         let stackView = UIStackView(arrangedSubviews: tabs)
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -175,6 +188,7 @@ class ProfileHeader: UIView {
         addSubview(followingCount)
         addSubview(followingTextLabel)
         addSubview(sectionsStack)
+        addSubview(indicator)
         configureUI()
         configureStackButton()
     }
@@ -206,6 +220,12 @@ class ProfileHeader: UIView {
     }
     
     private func configureUI() {
+        
+        for i in 0..<tabs.count {
+            indicatorLeadingAnchors.append(indicator.leadingAnchor.constraint(equalTo: sectionsStack.arrangedSubviews[i].leadingAnchor))
+            indicatorTrailingAnchors.append(indicator.trailingAnchor.constraint(equalTo: sectionsStack.arrangedSubviews[i].trailingAnchor))
+        }
+        
         NSLayoutConstraint.activate([
             profileCoverImage.topAnchor.constraint(equalTo: topAnchor),
             profileCoverImage.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -245,8 +265,13 @@ class ProfileHeader: UIView {
             followrsTextLabel.bottomAnchor.constraint(equalTo: followingCount.bottomAnchor),
             
             sectionsStack.topAnchor.constraint(equalTo: followingCount.bottomAnchor, constant: 5),
-            sectionsStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            sectionsStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            sectionsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
+            sectionsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -25),
+            
+            indicator.topAnchor.constraint(equalTo: sectionsStack.arrangedSubviews[0].bottomAnchor),
+            indicatorLeadingAnchors[0],
+            indicatorTrailingAnchors[0],
+            indicator.heightAnchor.constraint(equalToConstant: 4)
         ])
     }
     

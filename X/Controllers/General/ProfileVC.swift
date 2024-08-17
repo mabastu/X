@@ -24,7 +24,7 @@ class ProfileVC: UIViewController {
         profileTableView.dataSource = self
         layoutUI()
         
-        let headerView = ProfileHeader(frame: CGRect(x: 0, y: 0, width: profileTableView.frame.width, height: 360))
+        let headerView = ProfileHeader(frame: CGRect(x: 0, y: 0, width: profileTableView.frame.width, height: 370))
         profileTableView.tableHeaderView = headerView
     }
     

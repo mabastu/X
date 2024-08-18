@@ -22,6 +22,7 @@ class HomeVC: UIViewController {
         timeline.dataSource = self
         timeline.delegate = self
         configureNavigationBar()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(didTapSginOut))
     }
     
     override func viewDidLayoutSubviews() {
@@ -31,6 +32,10 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        handleAuthentication()
+    }
+    
+    private func handleAuthentication() {
         if Auth.auth().currentUser == nil {
             let vc = UINavigationController(rootViewController: OnboardingVC())
             vc.modalPresentationStyle = .fullScreen
@@ -56,7 +61,11 @@ class HomeVC: UIViewController {
         navigationController?.pushViewController(ProfileVC(), animated: true)
     }
 
-
+    @objc func didTapSginOut() {
+        try? Auth.auth().signOut()
+        handleAuthentication()
+    }
+    
 }
 
 extension HomeVC: UITableViewDelegate, UITableViewDataSource {

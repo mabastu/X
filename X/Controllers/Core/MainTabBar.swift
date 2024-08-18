@@ -23,6 +23,7 @@ class MainTabBar: UITabBarController {
         directMessagesVC.tabBarItem.image = UIImage(systemName: "envelope")
         
         UITabBar.appearance().tintColor = .label
+        UINavigationBar.appearance().tintColor = .label
       
         setViewControllers([homeVC, searchVC, notificationsVC, directMessagesVC], animated: true)
     }

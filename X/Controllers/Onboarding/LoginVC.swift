@@ -1,5 +1,5 @@
 //
-//  RegisterVC.swift
+//  LoginVC.swift
 //  X
 //
 //  Created by Mabast on 2024-08-18.
@@ -8,15 +8,15 @@
 import UIKit
 import Combine
 
-class RegisterVC: UIViewController {
+class LoginVC: UIViewController {
     
     private var viewModel = AuthenticationViewModel()
     private var subscription: Set<AnyCancellable> = []
     
-    private let registerTitle: UILabel = {
+    private let loginTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Create your account"
+        label.text = "Login to your account"
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         return label
     }()
@@ -39,10 +39,10 @@ class RegisterVC: UIViewController {
         return textField
     }()
     
-    private let registerButton: UIButton = {
+    private let loginButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Create Acoount", for: .normal)
+        button.setTitle("Login", for: .normal)
         button.tintColor = .systemBackground
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         button.isEnabled = false
@@ -55,23 +55,22 @@ class RegisterVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        view.addSubview(registerTitle)
+        view.addSubview(loginTitle)
         view.addSubview(emailTextField)
         view.addSubview(passwordTextField)
-        view.addSubview(registerButton)
+        view.addSubview(loginButton)
         setupConstraints()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapToDismissKeyboard)))
-        registerButton.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
         bindViews()
+        loginButton.addTarget(self, action: #selector(didTapLogin), for: .touchUpInside)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             
-            registerTitle.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            registerTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loginTitle.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            loginTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            emailTextField.topAnchor.constraint(equalTo: registerTitle.bottomAnchor, constant: 20),
+            emailTextField.topAnchor.constraint(equalTo: loginTitle.bottomAnchor, constant: 20),
             emailTextField.widthAnchor.constraint(equalToConstant: view.frame.width - 40),
             emailTextField.heightAnchor.constraint(equalToConstant: 60),
             emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -81,10 +80,10 @@ class RegisterVC: UIViewController {
             passwordTextField.heightAnchor.constraint(equalToConstant: 60),
             passwordTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            registerButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
-            registerButton.widthAnchor.constraint(equalToConstant: 180),
-            registerButton.heightAnchor.constraint(equalToConstant: 50),
-            registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loginButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
+            loginButton.widthAnchor.constraint(equalToConstant: 180),
+            loginButton.heightAnchor.constraint(equalToConstant: 50),
+            loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
         ])
     }
@@ -94,8 +93,8 @@ class RegisterVC: UIViewController {
         passwordTextField.addTarget(self, action: #selector(passwordTextFieldDidChange), for: .editingChanged)
         viewModel.$isAuthenticationValid.sink { [weak self] validationState in
             if let self = self {
-                self.registerButton.isEnabled = validationState
-                self.registerButton.backgroundColor = validationState ? .label : .systemGray5
+                self.loginButton.isEnabled = validationState
+                self.loginButton.backgroundColor = validationState ? .label : .systemGray5
             }
         }.store(in: &subscription)
         
@@ -121,7 +120,7 @@ class RegisterVC: UIViewController {
         view.endEditing(true)
     }
     
-    @objc private func didTapRegister() {
-        viewModel.createUser()
+    @objc private func didTapLogin() {
+        viewModel.loginUser()
     }
 }

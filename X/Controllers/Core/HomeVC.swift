@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class HomeVC: UIViewController {
     
@@ -28,10 +29,19 @@ class HomeVC: UIViewController {
         timeline.frame = view.bounds
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if Auth.auth().currentUser == nil {
+            let vc = UINavigationController(rootViewController: OnboardingVC())
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true)
+        }
+    }
+    
     private func configureNavigationBar() {
         let logo = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
         logo.contentMode = .scaleAspectFit
-        let imageLogo = UITraitCollection.current.userInterfaceStyle == .dark ? UIImage(resource: .xDarkMode) : UIImage(resource: .xWhiteMode)
+        let imageLogo = UIImage(imageLiteralResourceName: "xLogo")
         logo.image = imageLogo
         
         let middleView = UIView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
@@ -39,7 +49,7 @@ class HomeVC: UIViewController {
         navigationItem.titleView = middleView
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapProfile))
-        navigationController?.navigationBar.tintColor = UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black
+        navigationController?.navigationBar.tintColor = .label
     }
     
     @objc private func didTapProfile() {

@@ -104,6 +104,17 @@ class LoginVC: UIViewController {
             guard let vc = self.navigationController?.viewControllers.first as? OnboardingVC else { return }
             vc.dismiss(animated: true)
         }.store(in: &subscription)
+        
+        viewModel.$error.sink { [weak self] error in
+            guard let error = error else { return }
+            self?.presentAlert(error)
+        }.store(in: &subscription)
+    }
+    
+    private func presentAlert(_ error: String) {
+        let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     @objc private func emailTextFieldDidChange() {

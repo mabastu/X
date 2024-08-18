@@ -6,8 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 class RegisterVC: UIViewController {
+    
+    private var viewModel = RegisterViewModel()
+    private var subscription: Set<AnyCancellable> = []
     
     private let registerTitle: UILabel = {
         let label = UILabel()
@@ -41,6 +45,7 @@ class RegisterVC: UIViewController {
         button.setTitle("Create Acoount", for: .normal)
         button.setTitleColor(.blackTextOnWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        button.isEnabled = false
         button.backgroundColor = .label
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 25
@@ -55,6 +60,9 @@ class RegisterVC: UIViewController {
         view.addSubview(passwordTextField)
         view.addSubview(registerButton)
         setupConstraints()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapToDismissKeyboard)))
+        registerButton.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
+        bindViews()
     }
     
     private func setupConstraints() {
@@ -81,4 +89,36 @@ class RegisterVC: UIViewController {
         ])
     }
     
+    private func bindViews() {
+        emailTextField.addTarget(self, action: #selector(emailTextFieldDidChange), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(passwordTextFieldDidChange), for: .editingChanged)
+        viewModel.$isRegistrationValid.sink { [weak self] validationState in
+            if let self = self {
+                self.registerButton.isEnabled = validationState
+                self.registerButton.backgroundColor = validationState ? .label : .systemGray5
+            }
+        }.store(in: &subscription)
+        
+        viewModel.$user.sink { [weak self] user in
+            guard let self = self else { return }
+        }.store(in: &subscription)
+    }
+    
+    @objc private func emailTextFieldDidChange() {
+        viewModel.email = emailTextField.text
+        viewModel.validateRegistration()
+    }
+    
+    @objc private func passwordTextFieldDidChange() {
+        viewModel.password = passwordTextField.text
+        viewModel.validateRegistration()
+    }
+    
+    @objc private func didTapToDismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc private func didTapRegister() {
+        viewModel.createUser()
+    }
 }

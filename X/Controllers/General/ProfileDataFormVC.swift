@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 class ProfileDataFormVC: UIViewController {
     
@@ -36,7 +37,7 @@ class ProfileDataFormVC: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 8
-        textField.attributedPlaceholder = NSAttributedString(string: "Name", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
+        textField.attributedPlaceholder = NSAttributedString(string: "Name", attributes: [NSAttributedString.Key.foregroundColor: UIColor.systemGray])
         return textField
     }()
     
@@ -49,7 +50,7 @@ class ProfileDataFormVC: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 8
-        textField.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
+        textField.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [NSAttributedString.Key.foregroundColor: UIColor.systemGray])
         return textField
     }()
     
@@ -62,7 +63,7 @@ class ProfileDataFormVC: UIViewController {
         imageView.layer.cornerRadius = 60
         imageView.backgroundColor = .lightGray
         imageView.image = UIImage(systemName: "camera.fill")
-        imageView.tintColor = .gray
+        imageView.tintColor = .systemGray
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -75,11 +76,23 @@ class ProfileDataFormVC: UIViewController {
         textView.layer.cornerRadius = 8
         textView.textContainerInset = .init(top: 15, left: 15, bottom: 15, right: 15)
         textView.text = "Write a short bio about yourself"
-        textView.textColor = .gray
+        textView.textColor = .systemGray
         textView.font = .systemFont(ofSize: 16)
         return textView
     }()
     
+    private let submitButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Create Account", for: .normal)
+        button.tintColor = .systemBackground
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        button.isEnabled = false
+        button.backgroundColor = .label
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,10 +103,30 @@ class ProfileDataFormVC: UIViewController {
         scrollView.addSubview(displayNameTextField)
         scrollView.addSubview(usernameTextField)
         scrollView.addSubview(bioTextView)
-        
+        scrollView.addSubview(submitButton)
+        bioTextView.delegate = self
+        displayNameTextField.delegate = self
+        usernameTextField.delegate = self
         isModalInPresentation = true
         
         configureConstraints()
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapScreenToDismiss)))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapUploadImage)))
+    }
+    
+    @objc func didTapUploadImage() {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 1
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    @objc func didTapScreenToDismiss() {
+        view.endEditing(true)
     }
     
     func configureConstraints() {
@@ -124,7 +157,55 @@ class ProfileDataFormVC: UIViewController {
             bioTextView.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 20),
             bioTextView.leadingAnchor.constraint(equalTo: usernameTextField.leadingAnchor),
             bioTextView.trailingAnchor.constraint(equalTo: usernameTextField.trailingAnchor),
-            bioTextView.heightAnchor.constraint(equalToConstant: 150)
+            bioTextView.heightAnchor.constraint(equalToConstant: 150),
+            
+            submitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            submitButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -20),
+            submitButton.heightAnchor.constraint(equalToConstant: 50),
         ])
+    }
+}
+
+
+extension ProfileDataFormVC: UITextViewDelegate, UITextFieldDelegate, PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+                if let image = object as? UIImage {
+                    DispatchQueue.main.async {
+                        self?.avatarImageView.image = image
+                        self?.avatarImageView.contentMode = .scaleAspectFill
+                    }
+                }
+            }
+        }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: textView.frame.origin.y - 170), animated: true)
+        if textView.textColor == .systemGray {
+                textView.text = ""
+                textView.textColor = .label
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        textView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        if textView.text.isEmpty {
+            textView.text = "Write a short bio about yourself"
+            textView.textColor = .systemGray
+        }
+        
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: textField.frame.origin.y - 100), animated: true)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
 }

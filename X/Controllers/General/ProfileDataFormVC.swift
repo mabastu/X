@@ -7,8 +7,12 @@
 
 import UIKit
 import PhotosUI
+import Combine
 
 class ProfileDataFormVC: UIViewController {
+    
+    private var viewModel = ProfileDataFormViewModel()
+    private var subscription: Set<AnyCancellable> = []
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -113,6 +117,26 @@ class ProfileDataFormVC: UIViewController {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapScreenToDismiss)))
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapUploadImage)))
+        bindViews()
+    }
+    
+    private func bindViews() {
+        displayNameTextField.addTarget(self, action: #selector(displayNameDidChange), for: .editingChanged)
+        usernameTextField.addTarget(self, action: #selector(usernameDidChange), for: .editingChanged)
+        viewModel.$isFormValid.sink { [weak self] buttonState in
+            self?.submitButton.isEnabled = buttonState
+        }
+        .store(in: &subscription)
+    }
+    
+    @objc func displayNameDidChange() {
+        viewModel.displayName = displayNameTextField.text
+        viewModel.validateForm()
+    }
+    
+    @objc func usernameDidChange() {
+        viewModel.username = usernameTextField.text
+        viewModel.validateForm()
     }
     
     @objc func didTapUploadImage() {
@@ -178,6 +202,7 @@ extension ProfileDataFormVC: UITextViewDelegate, UITextFieldDelegate, PHPickerVi
                     DispatchQueue.main.async {
                         self?.avatarImageView.image = image
                         self?.avatarImageView.contentMode = .scaleAspectFill
+                        self?.viewModel.image = image
                     }
                 }
             }
@@ -207,5 +232,10 @@ extension ProfileDataFormVC: UITextViewDelegate, UITextFieldDelegate, PHPickerVi
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        viewModel.bio = textView.text
+        viewModel.validateForm()
     }
 }

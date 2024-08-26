@@ -117,6 +117,7 @@ class ProfileDataFormVC: UIViewController {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapScreenToDismiss)))
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapUploadImage)))
+        submitButton.addTarget(self, action: #selector(didTapSubmit), for: .touchUpInside)
         bindViews()
     }
     
@@ -125,8 +126,13 @@ class ProfileDataFormVC: UIViewController {
         usernameTextField.addTarget(self, action: #selector(usernameDidChange), for: .editingChanged)
         viewModel.$isFormValid.sink { [weak self] buttonState in
             self?.submitButton.isEnabled = buttonState
+            self?.submitButton.backgroundColor = buttonState ? .label : .systemGray5
         }
         .store(in: &subscription)
+    }
+    
+    @objc func didTapSubmit() {
+        viewModel.uploadAvatarImage()
     }
     
     @objc func displayNameDidChange() {

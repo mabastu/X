@@ -129,6 +129,12 @@ class ProfileDataFormVC: UIViewController {
             self?.submitButton.backgroundColor = buttonState ? .label : .systemGray5
         }
         .store(in: &subscription)
+        
+        viewModel.$isOnboardingFinished.sink { [weak self] success in
+            if success {
+                self?.dismiss(animated: true)
+            }
+        }.store(in: &subscription)
     }
     
     @objc func didTapSubmit() {

@@ -20,7 +20,7 @@ final class ProfileDataFormViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var isFormValid: Bool = false
     @Published var error: String = ""
-    @Published var url: URL?
+    @Published var isOnboardingFinished: Bool = false
     
     private var subscription: Set<AnyCancellable>  = []
     
@@ -43,13 +43,34 @@ final class ProfileDataFormViewModel: ObservableObject {
                 StorageManager.shared.getDownloadURL(for: metadata.path)
             })
             .sink { [weak self] completion in
-                if case.failure(let error) = completion {
+                switch completion {
+                case .failure(let error):
                     self?.error = error.localizedDescription
+                case .finished:
+                    self?.updateUserData()
                 }
             } receiveValue: { [weak self] url in
-                self?.url = url
+                self?.avatarPath = url.absoluteString
             }
             .store(in: &subscription)
     }
     
+    private func updateUserData() {
+        guard let avatarPath, let username, let displayName, let bio, let id = Auth.auth().currentUser?.uid else { return }
+        let updatedFields: [String: Any] = [
+            "displayName": displayName,
+            "username": username,
+            "bio": bio,
+            "avatarPath": avatarPath,
+            "isUserOnboard": true
+        ]
+        DatabaseManager.shared.collectionUsers(updateFields: updatedFields, for: id)
+            .sink{ [weak self] completion in
+                if case .failure(let error) = completion {
+                    self?.error = error.localizedDescription
+                }
+            } receiveValue: { [weak self] updated in
+                self?.isOnboardingFinished = updated
+            }.store(in: &subscription)
+    }
 }

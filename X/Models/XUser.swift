@@ -13,8 +13,8 @@ struct XUser: Codable {
     let id: String
     var displayName: String = ""
     var username: String = ""
-    var followers: Double = 0
-    var following: Double = 0
+    var followers: Int = 0
+    var following: Int = 0
     var createOn: Date = Date()
     var bio: String = ""
     var avatarPath: String = ""

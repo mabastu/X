@@ -37,7 +37,7 @@ final class ProfileDataFormViewModel: ObservableObject {
         let randomID = UUID().uuidString
         guard let image = image?.jpegData(compressionQuality: 0.5) else { return }
         let metaData = StorageMetadata()
-        metaData.contentType = "images/jpeg"
+        metaData.contentType = "images/jpg"
         StorageManager.shared.uploadProfilePhoto(with: randomID, image: image, metaData: metaData)
             .flatMap({ metadata in
                 StorageManager.shared.getDownloadURL(for: metadata.path)

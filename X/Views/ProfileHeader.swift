@@ -52,7 +52,7 @@ class ProfileHeader: UIView {
         return view
     }()
     
-    private let profileCoverImage: UIImageView = {
+    var profileCoverImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,10 +61,10 @@ class ProfileHeader: UIView {
         return imageView
     }()
     
-    private let profileAvatarImage: UIImageView = {
+    var profileAvatarImage: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(resource: .imageAvatar)
+        imageView.backgroundColor = .systemBackground
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 40
@@ -74,7 +74,7 @@ class ProfileHeader: UIView {
         return imageView
     }()
     
-    private let profileName: UILabel = {
+    var profileName: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.textColor = .label
@@ -83,7 +83,7 @@ class ProfileHeader: UIView {
         return label
     }()
     
-    private let userName: UILabel = {
+    var userName: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = .secondaryLabel
@@ -92,7 +92,7 @@ class ProfileHeader: UIView {
         return label
     }()
     
-    private let bio: UILabel = {
+    var bio: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.numberOfLines = 3
@@ -110,7 +110,7 @@ class ProfileHeader: UIView {
         return imageView
     }()
     
-    private let dateJoinedLabel: UILabel = {
+    var dateJoinedLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = .secondaryLabel
@@ -119,7 +119,7 @@ class ProfileHeader: UIView {
         return label
     }()
     
-    private let followingCount: UILabel = {
+    var followingCount: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .bold)
         label.textColor = .label
@@ -128,7 +128,7 @@ class ProfileHeader: UIView {
         return label
     }()
     
-    private let followrsCount: UILabel = {
+    var followrsCount: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .bold)
         label.textColor = .label
